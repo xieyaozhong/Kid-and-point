@@ -90,3 +90,7 @@ if('serviceWorker' in navigator){
 const observer=new MutationObserver(()=>ensureAppActions());
 observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
 window.addEventListener('DOMContentLoaded',ensureAppActions);
+
+// Firebase connection status, diagnostics, and password reset are isolated
+// from the main teacher/parent workflow to keep the core app stable.
+import('./firebase-health.js').catch(console.error);
