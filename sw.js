@@ -1,10 +1,11 @@
-const CACHE = 'kid-point-v5';
+const CACHE = 'kid-point-v6';
 const SHELL = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './firebase-config.js',
+  './firebase-health.js',
   './pwa.js',
   './report.html',
   './report.css',
