@@ -23,6 +23,8 @@ function friendlyError(error){
     'auth/invalid-email':'Email 格式不正確。',
     'auth/weak-password':'密碼強度不足，請至少使用 6 個字元。',
     'auth/operation-not-allowed':'Firebase 尚未啟用 Email/Password。請到 Firebase Console → Authentication → Sign-in method → Email/Password 開啟後再試一次。',
+    'auth/configuration-not-found':'這個 Firebase 專案尚未初始化 Authentication。請先在 Firebase Console 建立 Authentication，並啟用 Email/Password。',
+    'auth/admin-restricted-operation':'Firebase 目前禁止一般使用者自行建立帳號，請檢查 Authentication 的使用者註冊設定。',
     'auth/too-many-requests':'Firebase 暫時限制這台裝置建立新帳號，請稍後再試或換一個網路。',
     'auth/network-request-failed':'目前無法連上 Firebase Authentication，請檢查網路後再試。',
     'auth/invalid-api-key':'Firebase API Key 無效，請重新確認 Web App 設定。',
@@ -81,7 +83,12 @@ async function handleRegister(event){
       showMessage('帳號建立成功，正在進入第一次設定…','ok');
     }catch(profileError){
       console.error('profile provisioning failed',profileError);
-      showMessage('Firebase 帳號已建立成功，但 Firestore 個人資料尚未寫入。請確認 Firestore Database 已建立並套用 firestore.rules。','bad');
+      const code=profileError?.code||'';
+      if(code==='not-found' || code==='failed-precondition'){
+        showMessage('Firebase 帳號已建立成功，但 Cloud Firestore 尚未建立。請先建立 Firestore Database，再重新登入。','bad');
+      }else{
+        showMessage('Firebase 帳號已建立成功，但 Firestore 個人資料尚未寫入。請確認 Firestore Database 已建立並套用 firestore.rules。','bad');
+      }
     }
   }catch(error){
     console.error('registration failed',error);
