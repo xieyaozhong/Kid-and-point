@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#f4f2eb" />
   <meta name="description" content="Kid & Point 老師與家長即時同步的孩子成長點數系統" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Kid & Point" />
   <title>Kid & Point｜孩子成長點數</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -105,5 +110,6 @@
 
   <div id="modalWrap" class="modal-wrap"><div class="modal"><div id="modalBody"></div></div></div>
   <script type="module" src="./app.js"></script>
+  <script type="module" src="./pwa.js"></script>
 </body>
 </html>
