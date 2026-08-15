@@ -1,13 +1,14 @@
 // Kid & Point Firebase 設定
-// Firebase Web config 不是私鑰；建立 Firebase Web App 後可將設定貼到這裡。
-// apiKey 尚待從 Firebase Console 的 Web App Config 補上。
+// Firebase Web config 不是伺服器私鑰；此檔用於前端初始化 Firebase。
 export const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyDLYvNr_2E37zgw4dshHcX5yMCY_lMQ_LA",
   authDomain: "coffee-ship-acc39.firebaseapp.com",
+  databaseURL: "https://coffee-ship-acc39-default-rtdb.firebaseio.com",
   projectId: "coffee-ship-acc39",
-  storageBucket: "",
+  storageBucket: "coffee-ship-acc39.firebasestorage.app",
   messagingSenderId: "282578790981",
-  appId: "1:282578790981:web:bf04b69dc6e9f33f3cd12c"
+  appId: "1:282578790981:web:bf04b69dc6e9f33f3cd12c",
+  measurementId: "G-0LEM6KTGFG"
 };
 
 export function hasFirebaseConfig(config = firebaseConfig) {
