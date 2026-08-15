@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f2eb" />
+  <meta name="description" content="Kid & Point 孩子成長週報與月報" />
+  <title>Kid & Point｜成長報告</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./report.css" />
+</head>
+<body>
+  <div id="reportLoading" class="report-loading">正在整理成長紀錄…</div>
+  <main id="reportApp" class="report-app hidden">
+    <header class="report-head">
+      <div class="report-title">
+        <div class="eyebrow" style="color:var(--green)">KID & POINT</div>
+        <h1>孩子成長報告</h1>
+        <div id="reportSubtitle" class="meta">—</div>
+      </div>
+      <div class="report-toolbar">
+        <div class="range-tabs"><button class="active" data-range="week">本週</button><button data-range="month">本月</button></div>
+        <select id="reportStudent" class="student-select"></select>
+        <button id="shareReport" class="btn secondary">分享摘要</button>
+        <a class="btn secondary back-link" href="./">返回主系統</a>
+      </div>
+    </header>
+
+    <section class="metric-grid" id="metricGrid"></section>
+
+    <div class="report-grid" style="margin-top:18px">
+      <section class="panel report-wide">
+        <div class="row between"><div><h3 class="section-title">最近 7 天點數</h3><div class="meta">包含老師核實任務與手動加扣點</div></div><div id="rangeNet" class="pill"></div></div>
+        <div id="dailyChart" class="chart"></div>
+      </section>
+
+      <section class="panel">
+        <h3 class="section-title">學習與習慣分布</h3>
+        <div class="meta">依核實完成任務的點數統計</div>
+        <div id="categoryBreakdown" style="margin-top:16px"></div>
+      </section>
+
+      <section class="panel">
+        <h3 class="section-title">目前待辦</h3>
+        <div id="todoGrid" class="todo-grid"></div>
+      </section>
+
+      <section class="panel">
+        <h3 class="section-title">近期成就</h3>
+        <div id="achievements"></div>
+      </section>
+
+      <section class="panel">
+        <h3 class="section-title">孩子回饋與觀察</h3>
+        <div id="reportFeedback"></div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="./report.js"></script>
+  <script type="module" src="./pwa.js"></script>
+</body>
+</html>
