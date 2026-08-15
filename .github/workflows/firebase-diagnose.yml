@@ -1,0 +1,58 @@
+name: Firebase Diagnose
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/firebase-diagnose.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Firebase Auth and Firestore
+        env:
+          FIREBASE_API_KEY: AIzaSyDLYvNr_2E37zgw4dshHcX5yMCY_lMQ_LA
+          FIREBASE_PROJECT_ID: coffee-ship-acc39
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+
+          key = os.environ['FIREBASE_API_KEY']
+          project = os.environ['FIREBASE_PROJECT_ID']
+
+          def read_json(req):
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as r:
+                      return r.status, json.loads(r.read().decode() or '{}')
+              except urllib.error.HTTPError as e:
+                  raw = e.read().decode()
+                  try:
+                      data = json.loads(raw or '{}')
+                  except Exception:
+                      data = {'raw': raw}
+                  return e.code, data
+
+          config_url = f'https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key={key}'
+          status, data = read_json(urllib.request.Request(config_url))
+          print('PROJECT_CONFIG_HTTP=', status)
+          print('allowPasswordUser=', data.get('allowPasswordUser'))
+          print('authorizedDomains=', data.get('authorizedDomains'))
+
+          auth_url = f'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={key}'
+          payload = json.dumps({
+              'email':'kidpoint-diagnostic@example.invalid',
+              'password':'KidPoint-Diagnostic-Only',
+              'returnSecureToken':True
+          }).encode()
+          status, data = read_json(urllib.request.Request(auth_url, data=payload, headers={'Content-Type':'application/json'}, method='POST'))
+          message = data.get('error',{}).get('message','OK')
+          print('PASSWORD_AUTH_HTTP=', status)
+          print('PASSWORD_AUTH_RESULT=', message)
+
+          fs_url = f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents/users/__kidpoint_diagnostic__?key={key}'
+          status, data = read_json(urllib.request.Request(fs_url))
+          print('FIRESTORE_HTTP=', status)
+          print('FIRESTORE_STATUS=', data.get('error',{}).get('status','OK'))
+          print('FIRESTORE_MESSAGE=', data.get('error',{}).get('message','OK'))
+          PY
