@@ -29,7 +29,7 @@ if(!cfg||!hasFirebaseConfig(cfg)){
   fail('尚未設定 Firebase，請先回主系統完成連線設定');
 }else{
   try{
-    const app=initializeApp(cfg,'kid-point-report');
+    const app=initializeApp(cfg);
     auth=getAuth(app);db=getFirestore(app);
     onAuthStateChanged(auth,handleAuth);
   }catch(e){fail('Firebase 初始化失敗：'+e.message)}
