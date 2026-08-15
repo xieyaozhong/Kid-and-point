@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#2e6a55" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Kid & Point" />
+  <title>Kid & Point｜孩子模式</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./child.css" />
+</head>
+<body>
+  <section id="childLoading" class="child-loading"><div><div class="spinner"></div>正在準備今天的任務…</div></section>
+
+  <div id="childApp" class="child-app hidden">
+    <header class="child-top">
+      <div class="brand"><div class="logo">✦</div><div><h1>Kid & Point</h1><small>孩子模式</small></div></div>
+      <div class="row"><select id="childStudent" class="student-select"></select><a class="btn secondary" href="./">家長／老師模式</a></div>
+    </header>
+
+    <main>
+      <section class="child-hero">
+        <div class="eyebrow">今天也累積一點點</div>
+        <h2 id="childName">今天的我</h2>
+        <div class="child-points"><span id="childPoints">0</span> 點</div>
+        <div class="progress"><i id="childProgress" style="width:0%"></i></div>
+        <div class="row between"><small id="childProgressText">今日 0 / 0</small><small id="childStreak">連續成長 0 天</small></div>
+      </section>
+
+      <section class="child-grid">
+        <div class="child-main-card">
+          <div class="row between"><div><div class="eyebrow child-green">TODAY</div><h3>今天要完成的事</h3></div><span id="todayBadge" class="pill">0 項</span></div>
+          <div id="childTasks"></div>
+        </div>
+
+        <aside>
+          <section class="child-side-card">
+            <div class="eyebrow child-green">REWARD</div><h3>我正在累積</h3>
+            <div id="childRewards"></div>
+          </section>
+          <section class="child-side-card child-message-card">
+            <div class="eyebrow">TODAY'S MESSAGE</div>
+            <p id="childMessage">先完成一件小事，就已經是在前進。</p>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./child.js"></script>
+</body>
+</html>
