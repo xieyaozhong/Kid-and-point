@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Kid & Point">
+  <rect width="512" height="512" rx="118" fill="#2e6a55"/>
+  <circle cx="256" cy="256" r="154" fill="#f4f2eb" opacity="0.12"/>
+  <path d="M256 92l36 102 108 3-85 66 31 104-90-60-90 60 31-104-85-66 108-3z" fill="#dff0b8"/>
+  <circle cx="256" cy="256" r="46" fill="#f2c96d"/>
+</svg>
