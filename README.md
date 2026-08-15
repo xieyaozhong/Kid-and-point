@@ -1,68 +1,211 @@
 # Kid & Point
 
-一套讓老師與家長共同追蹤孩子表現的成長點數系統。
+老師與家長即時同步的孩子成長點數系統。
 
-## 已完成的第一版功能
+## Firebase 串接版已完成
 
-- 老師端／家長端雙入口
-- 學生個別狀態與目前點數
-- 老師發佈任務
-- 內建任務分類：健康作息、學科優秀
-- 家長回報任務完成
-- 老師核實完成後才正式發點
-- 即時加點與原因紀錄
-- 完成時間、核實時間、歷史點數帳本
-- 家長自訂獎品
-- 孩子提出兌換、老師核實兌換
-- 孩子回饋／家長觀察紀錄
-- 學習網站連結
-- 多學生切換
-- 手機版響應式介面
+目前 `main` 已改為真正的 Firebase 架構，而不是 localStorage 共用 Demo。
 
-## 即時同步
+### 老師端
 
-網站本身可直接部署到 GitHub Pages，但 GitHub Pages 是靜態網站，不會替不同裝置保存共用資料。
+- Email / 密碼帳號登入
+- 第一次登入可建立家庭空間
+- 自動產生 `KP-XXXXXX` 家庭代碼
+- 新增多位學生
+- 發佈任務
+- 內建健康作息 / 學科優秀任務模板
+- 家長回報完成後，由老師核實
+- 核實完成才正式加點
+- 即時加點 / 扣點
+- 完整點數帳本
+- 核實獎品兌換
+- 查看完成與核實時間
 
-系統已內建 Firebase Firestore 即時同步介面：
+### 家長端
 
-1. 到 Firebase Console 建立一個專案。
-2. 建立 Web App。
-3. 啟用 Firestore Database。
-4. 在網頁右上角按「同步設定」。
-5. 將 Firebase 提供的 Web App config JSON 貼入。
-6. 儲存後重新載入，畫面會顯示「Firestore 即時同步中」。
+- Email / 密碼帳號登入
+- 輸入老師提供的家庭代碼加入
+- 即時查看孩子點數
+- 查看進行中任務
+- 回報任務完成並附註
+- 查看完成與老師核實時間
+- 自訂獎品與兌換點數
+- 申請獎品兌換
+- 紀錄孩子回饋 / 家長觀察
+- 查看學習網站連結
 
-沒有設定 Firebase 時，系統會自動使用瀏覽器 localStorage 的 Demo 單機資料，不會讓頁面失效。
+### 即時同步
 
-## 建議的正式版安全設定
+Firestore 使用 `onSnapshot` 即時監聽，因此老師和家長在不同手機、平板或電腦登入同一家庭後，資料會同步更新。
 
-目前第一版使用 `kidpoint/shared` 作為共享文件，方便先完成即時同步驗證。正式給真實家庭與老師使用前，建議加入 Firebase Authentication，並將資料拆成：
+點數核實與獎品兌換使用 Firestore Transaction，避免重複核實造成重複加點或重複扣點。
 
-- `users/{uid}`：帳號、角色（teacher / parent）
-- `students/{studentId}`：孩子基本狀態
-- `tasks/{taskId}`：任務
-- `ledger/{entryId}`：點數帳本
-- `rewards/{rewardId}`：獎品
-- `redemptions/{redemptionId}`：兌換申請
-- `feedback/{feedbackId}`：孩子回饋
-- `families/{familyId}`：老師與家長的存取關係
+---
 
-正式版 Firestore Rules 應限制：老師才能核實任務與兌換、家長只能查看被授權孩子並新增獎品／回饋、孩子本身不可直接修改點數。
+## 第一次 Firebase 設定
+
+### 1. 建立 Firebase Project
+
+進入 Firebase Console，建立一個新 Project。
+
+### 2. 建立 Web App
+
+在 Project Overview 內新增 Web App，Firebase 會提供：
+
+```js
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};
+```
+
+網站第一次開啟時會直接顯示「連接 Firebase」畫面，可以把這些值貼進去。
+
+也可以直接修改：
+
+`firebase-config.js`
+
+把 Firebase 提供的 config 寫進檔案後，所有裝置就不需要各自輸入設定。
+
+> Firebase Web config 是用來識別 Firebase Project 的前端設定，不應把它當成伺服器私鑰。真正的資料保護要靠 Authentication 與 Firestore Security Rules。
+
+### 3. 啟用 Authentication
+
+Firebase Console → Authentication → Sign-in method
+
+啟用：
+
+- Email / Password
+
+### 4. 建立 Cloud Firestore
+
+Firebase Console → Firestore Database → Create database
+
+建議正式使用時不要使用永久 Test Mode。
+
+### 5. 套用 Security Rules
+
+Repository 已包含：
+
+- `firestore.rules`
+- `firebase.json`
+
+可以直接把 `firestore.rules` 內容貼到 Firebase Console → Firestore → Rules。
+
+或安裝 Firebase CLI 後：
+
+```bash
+firebase login
+firebase use --add
+firebase deploy --only firestore:rules
+```
+
+---
+
+## Firestore 資料結構
+
+```text
+users/{uid}
+
+families/{familyCode}
+├─ students/{studentId}
+├─ tasks/{taskId}
+├─ submissions/{submissionId}
+├─ rewards/{rewardId}
+├─ redemptions/{redemptionId}
+├─ feedback/{feedbackId}
+└─ ledger/{entryId}
+```
+
+`families/{familyCode}` 內會保存：
+
+```text
+teachers: [uid]
+parents: [uid]
+```
+
+Firestore Rules 會以這兩個陣列判定使用者是否是家庭成員，以及是否具有老師權限。
+
+家長只能透過已知的家庭代碼讀取指定家庭，不能列出所有家庭。
+
+---
+
+## 核心流程
+
+### 任務
+
+```text
+老師發佈任務
+→ 家長即時看到
+→ 家長回報完成
+→ submission = pending
+→ 老師核實
+→ transaction 更新學生點數
+→ 建立 ledger
+→ task = done
+→ 老師 / 家長即時同步
+```
+
+### 獎品兌換
+
+```text
+家長建立獎品
+→ 申請兌換
+→ redemption = pending
+→ 老師核實
+→ transaction 檢查目前點數
+→ 扣除點數
+→ 建立負數 ledger
+→ 即時同步
+```
+
+---
 
 ## GitHub Pages
 
 Repository：`xieyaozhong/Kid-and-point`
 
-Pages 建議設定：
+Pages：
 
-- Source: Deploy from a branch
-- Branch: `main`
-- Folder: `/ (root)`
+```text
+Source: Deploy from a branch
+Branch: main
+Folder: / (root)
+```
 
-完成後網址會是：
+公開網址：
 
 `https://xieyaozhong.github.io/Kid-and-point/`
 
-## 下一階段建議
+---
 
-第二版可加入：帳號登入、老師／家長邀請碼、孩子端、照片或作品證明、任務期限、每日重複任務、排行榜（可關閉）、週報/月報、成長雷達圖、通知、PWA 安裝到桌面，以及更細緻的權限與 Firestore Security Rules。
+## 專案檔案
+
+```text
+Kid-and-point/
+├─ index.html
+├─ style.css
+├─ app.js
+├─ firebase-config.js
+├─ firestore.rules
+├─ firebase.json
+├─ README.md
+└─ LICENSE
+```
+
+## 下一階段
+
+- 忘記密碼 / Email 驗證
+- 家庭成員管理與移除
+- 老師邀請其他老師
+- 任務週期 / 每日重複
+- 照片或作品證明（Firebase Storage）
+- 每週 / 每月成長圖表
+- Push Notification
+- 孩子端
+- PWA 安裝到手機桌面
+- App Check
