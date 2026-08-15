@@ -1,4 +1,4 @@
-const CACHE = 'kid-point-v4';
+const CACHE = 'kid-point-v5';
 const SHELL = [
   './',
   './index.html',
