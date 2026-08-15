@@ -1,0 +1,19 @@
+{
+  "name": "Kid & Point｜孩子成長點數",
+  "short_name": "Kid & Point",
+  "description": "老師與家長即時同步的孩子成長點數、任務與獎勵系統",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f2eb",
+  "theme_color": "#2e6a55",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
