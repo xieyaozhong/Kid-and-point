@@ -81,6 +81,14 @@ Firebase Console → Authentication → Sign-in method
 
 - Email / Password
 
+接著到 Authentication → Settings → Authorized domains，加入：
+
+```text
+xieyaozhong.github.io
+```
+
+如果之後改成自己的網域，也要把該網域加入 Authorized domains。
+
 ### 4. 建立 Cloud Firestore
 
 Firebase Console → Firestore Database → Create database
