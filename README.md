@@ -11,6 +11,7 @@
 - Email / 密碼帳號登入
 - 第一次登入可建立家庭空間
 - 自動產生 `KP-XXXXXX` 家庭代碼
+- 可一鍵分享家庭代碼給家長
 - 新增多位學生
 - 發佈任務
 - 內建健康作息 / 學科優秀任務模板
@@ -20,6 +21,7 @@
 - 完整點數帳本
 - 核實獎品兌換
 - 查看完成與核實時間
+- 查看孩子本週 / 本月成長報告
 
 ### 家長端
 
@@ -33,12 +35,54 @@
 - 申請獎品兌換
 - 紀錄孩子回饋 / 家長觀察
 - 查看學習網站連結
+- 查看與分享孩子成長摘要
 
 ### 即時同步
 
 Firestore 使用 `onSnapshot` 即時監聽，因此老師和家長在不同手機、平板或電腦登入同一家庭後，資料會同步更新。
 
 點數核實與獎品兌換使用 Firestore Transaction，避免重複核實造成重複加點或重複扣點。
+
+---
+
+## 成長週報 / 月報
+
+主系統登入後會出現「成長報告」入口。
+
+報告頁：
+
+`report.html`
+
+目前包含：
+
+- 本週 / 本月切換
+- 目前總點數
+- 期間獲得點數
+- 已核實任務數
+- 期間點數淨變化
+- 最近 7 天點數圖
+- 健康作息 / 學科等任務分布
+- 進行中任務、待核實、待兌換摘要
+- 近期成就
+- 家長觀察 / 老師紀錄
+- Web Share / 複製文字分享摘要
+
+報告直接讀取同一個 Firestore 家庭空間，不建立第二份資料。
+
+---
+
+## PWA / 加入手機桌面
+
+Repository 已加入：
+
+- `manifest.webmanifest`
+- `sw.js`
+- `icon.svg`
+- `pwa.js`
+
+支援瀏覽器安裝提示。iPhone / iPad 使用 Safari 時，可透過「分享 → 加入主畫面」把 Kid & Point 當成 App 開啟。
+
+Service Worker 會快取主要介面資源；Firebase 即時資料仍以線上 Firestore 為主。
 
 ---
 
@@ -189,6 +233,10 @@ Folder: / (root)
 
 `https://xieyaozhong.github.io/Kid-and-point/`
 
+成長報告：
+
+`https://xieyaozhong.github.io/Kid-and-point/report.html`
+
 ---
 
 ## 專案檔案
@@ -198,6 +246,13 @@ Kid-and-point/
 ├─ index.html
 ├─ style.css
 ├─ app.js
+├─ pwa.js
+├─ manifest.webmanifest
+├─ sw.js
+├─ icon.svg
+├─ report.html
+├─ report.css
+├─ report.js
 ├─ firebase-config.js
 ├─ firestore.rules
 ├─ firebase.json
@@ -212,8 +267,7 @@ Kid-and-point/
 - 老師邀請其他老師
 - 任務週期 / 每日重複
 - 照片或作品證明（Firebase Storage）
-- 每週 / 每月成長圖表
 - Push Notification
 - 孩子端
-- PWA 安裝到手機桌面
 - App Check
+- 管理員匯出 CSV / PDF 成長報告
