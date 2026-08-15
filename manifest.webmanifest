@@ -1,7 +1,7 @@
 {
   "name": "Kid & Point｜孩子成長點數",
   "short_name": "Kid & Point",
-  "description": "老師與家長即時同步的孩子成長點數、任務與獎勵系統",
+  "description": "老師、家長與孩子共用的即時成長點數、任務與獎勵系統",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -14,6 +14,22 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "孩子模式",
+      "short_name": "孩子模式",
+      "description": "查看今天任務與點數",
+      "url": "./child.html",
+      "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml"}]
+    },
+    {
+      "name": "成長報告",
+      "short_name": "成長報告",
+      "description": "查看本週與本月成長摘要",
+      "url": "./report.html",
+      "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml"}]
     }
   ]
 }
