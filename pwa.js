@@ -92,5 +92,6 @@ observer.observe(document.documentElement,{subtree:true,childList:true,attribute
 window.addEventListener('DOMContentLoaded',ensureAppActions);
 
 // Optional modules are kept separate from the core teacher/parent workflow.
+import('./auth-fix.js').catch(console.error);
 import('./firebase-health.js').catch(console.error);
 import('./recurring.js').catch(console.error);
