@@ -23,7 +23,8 @@ async function testAuthProvider(){
     const data=await r.json().catch(()=>({}));
     const message=data?.error?.message||`HTTP ${r.status}`;
     if(/INVALID_LOGIN_CREDENTIALS|EMAIL_NOT_FOUND|INVALID_PASSWORD|USER_DISABLED/.test(message)) return {ok:true,text:'Email/Password Authentication 已啟用'};
-    if(/OPERATION_NOT_ALLOWED/.test(message)) return {ok:false,text:'Email/Password 尚未啟用，請到 Firebase Authentication → Sign-in method 開啟'};
+    if(/CONFIGURATION_NOT_FOUND/.test(message)) return {ok:false,text:'Authentication 尚未初始化。先建立 Authentication，再開啟 Email/Password。'};
+    if(/OPERATION_NOT_ALLOWED/.test(message)) return {ok:false,text:'Email/Password 尚未啟用，請到 Authentication → Sign-in method 開啟'};
     if(/API_KEY_INVALID|PROJECT_NOT_FOUND/.test(message)) return {ok:false,text:'Firebase Web config 無效：'+message};
     return {ok:false,text:'Authentication 回應：'+message};
   }catch(e){
@@ -37,7 +38,7 @@ async function testFirestore(db){
     return {ok:true,text:snap.exists()?'Firestore 可連線':'Firestore 可連線，測試文件不存在（正常）'};
   }catch(e){
     if(e?.code==='permission-denied') return {ok:true,text:'Firestore 可連線，Security Rules 正在保護未授權資料'};
-    if(e?.code==='failed-precondition') return {ok:false,text:'Firestore 尚未建立或設定未完成'};
+    if(e?.code==='failed-precondition' || e?.code==='not-found') return {ok:false,text:'Cloud Firestore 預設資料庫尚未建立。請先建立 Firestore Database。'};
     if(e?.code==='unavailable') return {ok:false,text:'Firestore 暫時無法連線'};
     return {ok:false,text:`Firestore：${e?.code||e?.message||'未知錯誤'}`};
   }
@@ -46,16 +47,21 @@ async function testFirestore(db){
 function mount(){
   const card=$('#authScreen .auth-card');
   if(!card || $('#firebaseHealthPanel')) return;
+  const project=firebaseConfig.projectId || '';
   const panel=document.createElement('div');
   panel.id='firebaseHealthPanel';
   panel.className='notice';
   panel.style.marginTop='14px';
   panel.innerHTML=`
     <div class="row between" style="gap:12px;align-items:flex-start">
-      <div><b>Firebase 已綁定</b><div class="meta">${firebaseConfig.projectId || '尚未設定專案'}</div></div>
+      <div><b>Firebase 已綁定</b><div class="meta">${project || '尚未設定專案'}</div></div>
       <button id="firebaseDiagnoseBtn" class="btn secondary" type="button">檢查連線</button>
     </div>
-    <div id="firebaseHealthResult" class="meta" style="margin-top:8px">設定已載入，登入後資料會寫入 Cloud Firestore。</div>
+    <div id="firebaseHealthResult" class="meta" style="margin-top:8px">Web App 設定已載入；Authentication 與 Firestore 必須另外啟用。</div>
+    <div class="row" style="margin-top:10px;flex-wrap:wrap">
+      <a class="btn secondary" target="_blank" rel="noopener" href="https://console.firebase.google.com/project/${project}/authentication/providers">開啟 Authentication</a>
+      <a class="btn secondary" target="_blank" rel="noopener" href="https://console.firebase.google.com/project/${project}/firestore">開啟 Firestore</a>
+    </div>
     <button id="forgotPasswordBtn" class="btn secondary" type="button" style="width:100%;margin-top:10px">忘記密碼／寄重設信</button>`;
   card.appendChild(panel);
 
@@ -84,6 +90,7 @@ function mount(){
       const map={
         'auth/invalid-email':'Email 格式不正確',
         'auth/operation-not-allowed':'Firebase 尚未啟用 Email/Password',
+        'auth/configuration-not-found':'Firebase Authentication 尚未初始化',
         'auth/network-request-failed':'目前網路連線失敗'
       };
       out.innerHTML=resultRow('重設密碼',map[e?.code]||e?.message||'寄送失敗',false);
