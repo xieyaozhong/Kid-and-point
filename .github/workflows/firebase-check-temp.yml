@@ -32,7 +32,7 @@ jobs:
           body=json.dumps({'email':'kidpoint-check@example.invalid','password':'KidPoint-Check-Only','returnSecureToken':True}).encode()
           s,d=call(urllib.request.Request(auth,data=body,headers={'Content-Type':'application/json'},method='POST'))
           print('AUTH_HTTP=',s); print('AUTH_RESULT=',d.get('error',{}).get('message','OK'))
-          fs=f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents/users/__kidpoint_check__?key={key}'
+          fs=f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents/users/kidpoint-check?key={key}'
           s,d=call(urllib.request.Request(fs))
           print('FIRESTORE_HTTP=',s); print('FIRESTORE_STATUS=',d.get('error',{}).get('status','OK')); print('FIRESTORE_MESSAGE=',d.get('error',{}).get('message','OK'))
           PY
