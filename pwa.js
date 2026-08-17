@@ -96,3 +96,4 @@ import('./auth-fix.js').catch(console.error);
 import('./login-guard.js').catch(console.error);
 import('./firebase-health.js').catch(console.error);
 import('./recurring.js').catch(console.error);
+import('./schedule.js').catch(console.error);
