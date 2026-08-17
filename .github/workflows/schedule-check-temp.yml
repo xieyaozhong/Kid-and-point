@@ -1,0 +1,12 @@
+name: Timetable Syntax Check Temp
+on:
+  push:
+    paths:
+      - '.github/workflows/schedule-check-temp.yml'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check timetable JavaScript syntax
+        run: node --check schedule.js
