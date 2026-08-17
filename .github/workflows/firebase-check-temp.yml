@@ -1,0 +1,38 @@
+name: Firebase Check Temp
+
+on:
+  push:
+    paths:
+      - '.github/workflows/firebase-check-temp.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Firebase services
+        run: |
+          python - <<'PY'
+          import json,re,urllib.request,urllib.error
+          text=open('firebase-config.js',encoding='utf-8').read()
+          def pick(name):
+              m=re.search(rf'{name}:\s*"([^"]+)"',text)
+              return m.group(1) if m else ''
+          key=pick('apiKey'); project=pick('projectId')
+          def call(req):
+              try:
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      return r.status,json.loads(r.read().decode() or '{}')
+              except urllib.error.HTTPError as e:
+                  raw=e.read().decode()
+                  try:data=json.loads(raw or '{}')
+                  except:data={'raw':raw}
+                  return e.code,data
+          auth=f'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={key}'
+          body=json.dumps({'email':'kidpoint-check@example.invalid','password':'KidPoint-Check-Only','returnSecureToken':True}).encode()
+          s,d=call(urllib.request.Request(auth,data=body,headers={'Content-Type':'application/json'},method='POST'))
+          print('AUTH_HTTP=',s); print('AUTH_RESULT=',d.get('error',{}).get('message','OK'))
+          fs=f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents/users/__kidpoint_check__?key={key}'
+          s,d=call(urllib.request.Request(fs))
+          print('FIRESTORE_HTTP=',s); print('FIRESTORE_STATUS=',d.get('error',{}).get('status','OK')); print('FIRESTORE_MESSAGE=',d.get('error',{}).get('message','OK'))
+          PY
